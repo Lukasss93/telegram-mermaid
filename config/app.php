@@ -18,6 +18,15 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
+     * --------------------------------------------------------------------------
+     * Application version
+     * --------------------------------------------------------------------------
+     * The version of your application. You may want to keep this updated in
+     * order to have correct version information in your application.
+     */
+    'version' => '1.0',
+
+    /*
     |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
