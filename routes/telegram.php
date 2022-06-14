@@ -2,16 +2,21 @@
 /** @var SergiX44\Nutgram\Nutgram $bot */
 
 use App\Telegram\Commands\StartCommand;
+use App\Telegram\Handlers\ExceptionHandler;
 
 /*
 |--------------------------------------------------------------------------
-| Nutgram Handlers
+| Bot commands
 |--------------------------------------------------------------------------
-|
-| Here is where you can register telegram handlers for Nutgram. These
-| handlers are loaded by the NutgramServiceProvider. Enjoy!
-|
 */
 
 $bot->onCommand('start', StartCommand::class)->description('Welcome message');
 $bot->onCommand('help', StartCommand::class)->description('Help message');
+
+/*
+|--------------------------------------------------------------------------
+| Exception handlers
+|--------------------------------------------------------------------------
+*/
+$bot->onApiError(ExceptionHandler::class);
+$bot->onException(ExceptionHandler::class);

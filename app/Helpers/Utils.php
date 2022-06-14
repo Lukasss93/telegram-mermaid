@@ -82,3 +82,16 @@ function cast(string $type, mixed $value, mixed $default = null): array|bool|flo
         default => $value,
     };
 }
+
+function sendExceptionViaTelegram(Throwable $e): void
+{
+    $bot = app(Nutgram::class);
+    $bot->sendMessage(message('exception', [
+        'name' => last(explode('\\', $e::class)),
+        'message' => $e->getMessage(),
+        'line' => $e->getLine(),
+        'file' => str_replace(base_path(), '', $e->getFile()),
+    ]), [
+        'chat_id' => config('owner.id'),
+    ]);
+}
