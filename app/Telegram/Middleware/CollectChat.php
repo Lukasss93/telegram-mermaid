@@ -16,13 +16,18 @@ class CollectChat
             return;
         }
 
-        $chat = DB::transaction(function () use ($user, $bot) {
+        $chatType = $bot->chat()?->type;
+        if ($chatType === null && $bot->chosenInlineResult() !== null) {
+            $chatType = 'private';
+        }
+
+        $chat = DB::transaction(function () use ($chatType, $user) {
 
             //save or update chat
             $chat = Chat::updateOrCreate([
                 'chat_id' => $user->id,
             ], [
-                'type' => $bot->chat()->type,
+                'type' => $chatType,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'username' => $user->username,
@@ -30,7 +35,7 @@ class CollectChat
                 'blocked_at' => null,
             ]);
 
-            if (!$chat->started_at && $bot->chat()->type === 'private') {
+            if (!$chat->started_at && $chatType === 'private') {
                 $chat->started_at = now();
                 $chat->save();
             }
