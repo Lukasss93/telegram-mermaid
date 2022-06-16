@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Statistic;
 use Illuminate\Support\Str;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Attributes\ParseMode;
@@ -81,6 +82,23 @@ function cast(string $type, mixed $value, mixed $default = null): array|bool|flo
         'array' => (array)$value,
         default => $value,
     };
+}
+
+/**
+ * Save bot statistic
+ * @param string $action
+ * @param string|null $category
+ * @param array|null $value
+ * @param int|null $chat_id
+ */
+function stats(string $action, string $category = null, array $value = null, int $chat_id = null): void
+{
+    Statistic::create([
+        'action' => $action,
+        'category' => $category,
+        'value' => $value,
+        'chat_id' => $chat_id ?? app(Nutgram::class)->userId(),
+    ]);
 }
 
 function sendExceptionViaTelegram(Throwable $e): void
