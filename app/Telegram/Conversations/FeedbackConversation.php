@@ -35,6 +35,8 @@ class FeedbackConversation extends Conversation
         $this->message_id = $message->message_id;
 
         $this->next('getFeedback');
+
+        stats('feedback', 'command');
     }
 
     /**
@@ -48,6 +50,7 @@ class FeedbackConversation extends Conversation
         if ($bot->isCallbackQuery() && $bot->callbackQuery()->data === 'feedback.cancel') {
             $bot->answerCallbackQuery();
             $this->end();
+            stats('feedback.cancelled', 'feedback');
 
             return;
         }
@@ -79,6 +82,8 @@ class FeedbackConversation extends Conversation
 
         //close conversation
         $this->end();
+
+        stats('feedback.sent', 'feedback');
     }
 
     public function closing(Nutgram $bot): void

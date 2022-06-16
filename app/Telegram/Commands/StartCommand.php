@@ -13,5 +13,7 @@ class StartCommand
             'parse_mode' => ParseMode::HTML,
             'disable_web_page_preview' => true,
         ]);
+
+        stats('start', 'command');
     }
 }

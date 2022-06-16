@@ -77,6 +77,8 @@ class InlineQueryHandler
 
     public function onChosenInlineResult(Nutgram $bot): void
     {
+        stats('sent.inline', 'diagram');
+
         //delete images
         if (config('bot.clear_inline_files')) {
             $chat_id = $bot->chosenInlineResult()->from->id;

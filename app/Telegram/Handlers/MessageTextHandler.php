@@ -55,10 +55,12 @@ class MessageTextHandler
                 ->detach();
 
             //send image
-            $bot->sendPhoto(InputFile::make($img, Str::uuid() . '.jpg'),[
+            $bot->sendPhoto(InputFile::make($img, Str::uuid().'.jpg'), [
                 'allow_sending_without_reply' => true,
                 'reply_to_message_id' => $inputMessage?->message_id,
             ]);
+
+            stats('sent.pm', 'diagram');
         } catch (RequestException $e) {
             $bot->sendMessage($e->response->body(),[
                 'allow_sending_without_reply' => true,

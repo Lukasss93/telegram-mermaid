@@ -18,5 +18,7 @@ class PrivacyCommand
             'reply_markup' => InlineKeyboardMarkup::make()
                 ->addRow(InlineKeyboardButton::make('Privacy Policy', config('bot.privacy'))),
         ]);
+
+        stats('privacy', 'command');
     }
 }

@@ -14,5 +14,7 @@ class AboutCommand
             'parse_mode' => ParseMode::HTML,
             'disable_web_page_preview' => true,
         ]);
+
+        stats('about', 'command');
     }
 }
