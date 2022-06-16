@@ -2,8 +2,14 @@
 <b>Name:</b> {{config('app.name')}}<br>
 <b>Username:</b> {{'@'.config('bot.username')}}<br>
 <b>Version:</b> {{config('app.version')}}<br>
+
+@if(config('bot.source'))
 <b>Source code</b>: <a href="{{config('bot.source')}}">Apri url</a><br>
+@endif
+
+@if(config('bot.changelog'))
 <b>Changelog:</b> <a href="{{config('bot.changelog')}}">Apri url</a><br>
+@endif
 
 <br>
 
