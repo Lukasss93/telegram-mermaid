@@ -10,6 +10,7 @@ use App\Telegram\Conversations\FeedbackConversation;
 use App\Telegram\Handlers\ExceptionHandler;
 use App\Telegram\Handlers\InlineQueryHandler;
 use App\Telegram\Handlers\MessageTextHandler;
+use App\Telegram\Handlers\UpdateChatStatusHandler;
 use App\Telegram\Middleware\CheckMaintenance;
 use App\Telegram\Middleware\CollectChat;
 use SergiX44\Nutgram\Telegram\Attributes\MessageTypes;
@@ -42,6 +43,7 @@ $bot->onCommand('cancel', CancelCommand::class)->description('Close a conversati
 | Bot handlers
 |--------------------------------------------------------------------------
 */
+$bot->onMyChatMember(UpdateChatStatusHandler::class);
 
 $bot->onMessageType(MessageTypes::TEXT, MessageTextHandler::class);
 
