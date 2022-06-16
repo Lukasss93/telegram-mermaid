@@ -9,7 +9,16 @@ use App\Telegram\Conversations\FeedbackConversation;
 use App\Telegram\Handlers\ExceptionHandler;
 use App\Telegram\Handlers\InlineQueryHandler;
 use App\Telegram\Handlers\MessageTextHandler;
+use App\Telegram\Middleware\CollectChat;
 use SergiX44\Nutgram\Telegram\Attributes\MessageTypes;
+
+/*
+|--------------------------------------------------------------------------
+| Global middlewares
+|--------------------------------------------------------------------------
+*/
+
+$bot->middleware(CollectChat::class);
 
 /*
 |--------------------------------------------------------------------------
