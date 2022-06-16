@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+    mysql:
+        container_name: telegram-mermaid-mysql
+        image: mysql
+        volumes:
+            - mysql-volume:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: mermaid
+            MYSQL_USER: mermaid
+            MYSQL_PASSWORD: mermaid
+        ports:
+            - "3306:3306"
+
+    redis:
+        container_name: telegram-mermaid-redis
+        image: redis
+        volumes:
+            - redis-volume:/data
+        environment:
+            REDIS_PASSWORD:
+        ports:
+            - "6379:6379"
+
+volumes:
+    mysql-volume:
+        name: telegram-mermaid-mysql-volume
+    redis-volume:
+        name: telegram-mermaid-redis-volume
