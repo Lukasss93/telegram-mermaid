@@ -7,6 +7,7 @@ use App\Telegram\Commands\PrivacyCommand;
 use App\Telegram\Commands\StartCommand;
 use App\Telegram\Conversations\FeedbackConversation;
 use App\Telegram\Handlers\ExceptionHandler;
+use App\Telegram\Handlers\InlineQueryHandler;
 use App\Telegram\Handlers\MessageTextHandler;
 use SergiX44\Nutgram\Telegram\Attributes\MessageTypes;
 
@@ -23,7 +24,6 @@ $bot->onCommand('privacy', PrivacyCommand::class)->description('Privacy Policy')
 $bot->onCommand('feedback', FeedbackConversation::class)->description('Send a feedback about the bot');
 $bot->onCommand('cancel', CancelCommand::class)->description('Close a conversation or a keyboard');
 
-
 /*
 |--------------------------------------------------------------------------
 | Bot handlers
@@ -32,6 +32,10 @@ $bot->onCommand('cancel', CancelCommand::class)->description('Close a conversati
 
 $bot->onMessageType(MessageTypes::TEXT, MessageTextHandler::class);
 
+$bot->onInlineQuery([InlineQueryHandler::class, 'onInlineQuery']);
+$bot->onChosenInlineResult([InlineQueryHandler::class, 'onChosenInlineResult']);
+$bot->onCommand('start INVALID_TEXT', [InlineQueryHandler::class, 'onInvalidInlineText']);
+$bot->onCommand('start MAX_TEXT', StartCommand::class);
 
 /*
 |--------------------------------------------------------------------------
