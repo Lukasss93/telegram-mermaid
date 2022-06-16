@@ -16,10 +16,7 @@ class CollectChat
             return;
         }
 
-        $chatType = $bot->chat()?->type;
-        if ($chatType === null && $bot->chosenInlineResult() !== null) {
-            $chatType = 'private';
-        }
+        $chatType = $bot->chat()?->type ?? 'private';
 
         $chat = DB::transaction(function () use ($chatType, $user) {
 
