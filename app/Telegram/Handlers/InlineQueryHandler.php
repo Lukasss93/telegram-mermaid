@@ -3,13 +3,12 @@
 namespace App\Telegram\Handlers;
 
 use App\Exceptions\EmptyTextException;
-use App\Jobs\ClearInlineFilesJob;
+use App\Exceptions\TooLongTextException;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use SergiX44\Nutgram\Nutgram;
-use SergiX44\Nutgram\Telegram\Types\Internal\InputFile;
 
 class InlineQueryHandler
 {
@@ -23,54 +22,56 @@ class InlineQueryHandler
                 throw new EmptyTextException('The text cannot be empty.');
             }
 
-            //get md5
-            $imageID = md5($text);
+            if (mb_strlen($text) > 250) {
+                throw new TooLongTextException('The text cannot be longer than 250 characters.');
+            }
 
-            //get image
-            $img = Http::baseUrl(config('mermaid.baseurl'))
+            //generate image and get response
+            $response = Http::baseUrl(config('mermaid.baseurl'))
                 ->withBody($text, 'text/plain')
-                ->post(config('mermaid.endpoint'))
+                ->post('render.jpg')
                 ->throw()
-                ->toPsrResponse()
-                ->getBody()
-                ->detach();
+                ->toPsrResponse();
 
-            //send image to PM
-            $message = $bot->sendPhoto(InputFile::make($img, $imageID.'.jpg'), [
-                'chat_id' => $chat_id,
-                'disable_notification' => true,
-            ]);
+            //get headers
+            $hash = $response->getHeader('X-Hash')[0];
+            $width = (int)$response->getHeader('X-Width')[0];
+            $height = (int)$response->getHeader('X-Height')[0];
 
-            //remember message
-            Redis::lpush("$chat_id-inline_files", $message->message_id);
+            //build cached image url
+            $url = sprintf("%scached/%s", config('mermaid.baseurl'), $hash);
+            echo $url."\n\n";
 
             //send message by file_id
             $bot->answerInlineQuery([
                 [
                     'type' => 'photo',
-                    'id' => $imageID,
-                    'photo_file_id' => $message->photo[0]->file_id,
+                    'id' => md5($text).'x',
+                    'photo_url' => $url,
+                    'thumb_url' => $url,
+                    'photo_width' => $width,
+                    'photo_height' => $height,
                 ],
             ], [
-                'switch_pm_text' => 'Max 256 chars. Use the PM to ignore limit.',
+                'switch_pm_text' => 'Max 250 chars. Use the PM to ignore limit.',
                 'switch_pm_parameter' => 'MAX_TEXT',
-                'cache_time' => 60 * 60 * 24,
+                'cache_time' => config('mermaid.inline_cache_time'),
             ]);
 
         } catch (RequestException $e) {
             $message = $e->response->body();
-            Redis::set("$chat_id-inline_error", $message);
+            Cache::set("$chat_id-inline_error", $message);
 
             $bot->answerInlineQuery([], [
                 'switch_pm_text' => 'Invalid text. Click here for more info.',
                 'switch_pm_parameter' => 'INVALID_TEXT',
-                'cache_time' => 60 * 60 * 24,
+                'cache_time' => config('mermaid.inline_cache_time'),
             ]);
-        } catch (EmptyTextException) {
+        } catch (EmptyTextException|TooLongTextException) {
             $bot->answerInlineQuery([], [
-                'switch_pm_text' => 'Max 256 chars. Use the PM to ignore limit.',
+                'switch_pm_text' => 'Max 250 chars. Use the PM to ignore limit.',
                 'switch_pm_parameter' => 'MAX_TEXT',
-                'cache_time' => 60 * 60 * 24,
+                'cache_time' => config('mermaid.inline_cache_time'),
             ]);
         }
     }
@@ -78,17 +79,11 @@ class InlineQueryHandler
     public function onChosenInlineResult(Nutgram $bot): void
     {
         stats('sent.inline', 'diagram');
-
-        //delete images
-        if (config('bot.clear_inline_files')) {
-            $chat_id = $bot->chosenInlineResult()->from->id;
-            ClearInlineFilesJob::dispatch($chat_id);
-        }
     }
 
     public function onInvalidInlineText(Nutgram $bot): void
     {
         $chat_id = $bot->userId();
-        $bot->sendMessage(Redis::get("$chat_id-inline_error"));
+        $bot->sendMessage(Cache::get("$chat_id-inline_error"));
     }
 }

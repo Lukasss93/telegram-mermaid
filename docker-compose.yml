@@ -14,18 +14,6 @@ services:
         ports:
             - "3306:3306"
 
-    redis:
-        container_name: telegram-mermaid-redis
-        image: redis
-        volumes:
-            - redis-volume:/data
-        environment:
-            REDIS_PASSWORD:
-        ports:
-            - "6379:6379"
-
 volumes:
     mysql-volume:
         name: telegram-mermaid-mysql-volume
-    redis-volume:
-        name: telegram-mermaid-redis-volume

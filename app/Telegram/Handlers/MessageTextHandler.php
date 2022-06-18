@@ -48,7 +48,7 @@ class MessageTextHandler
             //get image
             $img = Http::baseUrl(config('mermaid.baseurl'))
                 ->withBody($text, 'text/plain')
-                ->post(config('mermaid.endpoint'))
+                ->post('render.jpg')
                 ->throw()
                 ->toPsrResponse()
                 ->getBody()
