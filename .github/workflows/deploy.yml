@@ -1,0 +1,29 @@
+name: Deploy
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: 'Production'
+    steps:
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASS }}
+          script: |
+            cd ${{ secrets.PROJECT_PATH}}
+            php8.1 artisan down
+            git fetch --all -p
+            git reset --hard
+            git checkout "https://Lukasss93:${{ secrets.GIT_TOKEN }}@github.com/Lukasss93/telegram-mermaid.git" master
+            php8.1 composer.phar install --no-dev --optimize-autoloader --no-ansi --no-interaction --no-progress
+            php8.1 artisan migrate --force --step
+            php8.1 artisan optimize
+            php8.1 artisan nutgram:register-commands
+            php8.1 artisan up
+            echo 'DONE!'
