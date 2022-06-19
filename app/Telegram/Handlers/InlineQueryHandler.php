@@ -22,8 +22,11 @@ class InlineQueryHandler
                 throw new EmptyTextException('The text cannot be empty.');
             }
 
-            if (mb_strlen($text) > 250) {
-                throw new TooLongTextException('The text cannot be longer than 250 characters.');
+            if (mb_strlen($text) > config('mermaid.inline.max_chars')) {
+                throw new TooLongTextException(sprintf(
+                    "The text cannot be longer than %s characters.",
+                    config('mermaid.inline.max_chars')
+                ));
             }
 
             //generate image and get response
@@ -46,16 +49,16 @@ class InlineQueryHandler
             $bot->answerInlineQuery([
                 [
                     'type' => 'photo',
-                    'id' => md5($text).'x',
+                    'id' => md5($text),
                     'photo_url' => $url,
                     'thumb_url' => $url,
                     'photo_width' => $width,
                     'photo_height' => $height,
                 ],
             ], [
-                'switch_pm_text' => 'Max 250 chars. Use the PM to ignore limit.',
+                'switch_pm_text' => sprintf("Max %s chars. Use the PM to ignore limit.", config('mermaid.inline.max_chars')),
                 'switch_pm_parameter' => 'MAX_TEXT',
-                'cache_time' => config('mermaid.inline_cache_time'),
+                'cache_time' => config('mermaid.inline.cache_time'),
             ]);
 
         } catch (RequestException $e) {
@@ -65,13 +68,13 @@ class InlineQueryHandler
             $bot->answerInlineQuery([], [
                 'switch_pm_text' => 'Invalid text. Click here for more info.',
                 'switch_pm_parameter' => 'INVALID_TEXT',
-                'cache_time' => config('mermaid.inline_cache_time'),
+                'cache_time' => config('mermaid.inline.cache_time'),
             ]);
         } catch (EmptyTextException|TooLongTextException) {
             $bot->answerInlineQuery([], [
-                'switch_pm_text' => 'Max 250 chars. Use the PM to ignore limit.',
+                'switch_pm_text' => sprintf("Max %s chars. Use the PM to ignore limit.", config('mermaid.inline.max_chars')),
                 'switch_pm_parameter' => 'MAX_TEXT',
-                'cache_time' => config('mermaid.inline_cache_time'),
+                'cache_time' => config('mermaid.inline.cache_time'),
             ]);
         }
     }
