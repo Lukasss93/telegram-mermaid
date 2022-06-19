@@ -13,7 +13,29 @@ services:
             MYSQL_PASSWORD: mermaid
         ports:
             - "3306:3306"
+        networks:
+            - telegram-mermaid-network
+
+    dev:
+        container_name: telegram-mermaid-dev
+        image: chialab/php-dev:8.1-apache
+        ports:
+            - "80:80"
+        depends_on:
+            - db
+        volumes:
+            - ./:/var/www/html
+            - ./.docker/000-default.conf:/etc/apache2/sites-available/000-default.conf
+            - ./.docker/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+        networks:
+            - telegram-mermaid-network
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
 
 volumes:
     mysql-volume:
         name: telegram-mermaid-mysql-volume
+
+networks:
+    telegram-mermaid-network:
+        driver: bridge
