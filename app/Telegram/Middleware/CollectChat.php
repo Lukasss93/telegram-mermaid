@@ -18,18 +18,29 @@ class CollectChat
 
         $chatType = $bot->chat()?->type ?? 'private';
 
+        //collect groups/channels
+        if($chatType !== 'private') {
+            Chat::updateOrCreate([
+                'chat_id' => $bot->chat()->id,
+            ], [
+                'type' => $bot->chat()->type,
+                'first_name' => $bot->chat()->title ?? '',
+                'username' => $bot->chat()->username,
+            ]);
+        }
+
+        //collect users
         $chat = DB::transaction(function () use ($chatType, $user) {
 
             //save or update chat
             $chat = Chat::updateOrCreate([
                 'chat_id' => $user->id,
             ], [
-                'type' => $chatType,
+                'type' => 'private',
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'username' => $user->username,
                 'language_code' => $user->language_code,
-                'blocked_at' => null,
             ]);
 
             if (!$chat->started_at && $chatType === 'private') {
