@@ -22,6 +22,7 @@
 - SSL support
 - PHP ≥ 8.1
 - MariaDB ≥ 10.2.3 or Postgresql ≥ 9.5 or SQLite with JSON1 extension
+- Crontab (to update cached statistics)
 - GIT
 
 ## 🗃️ Flow chart
@@ -32,13 +33,13 @@
 0. `cd <vhost-folder>`
 1. `git clone https://github.com/<username>/telegram-mermaid.git`
 2. `cd telegram-mermaid`
-3. `php artisan migrate`
-4. `cp .env.example .env`
-5. Edit the `.env` file with your preferences
-6. `wget https://getcomposer.org/download/latest-2.x/composer.phar`
-7. `php composer.phar install`
-8. `sudo chmod -R 775 bootstrap/`
-9. `sudo chmod -R 775 storage/`
+3. `cp .env.example .env`
+4. Edit the `.env` file with your preferences
+5. `wget https://getcomposer.org/download/latest-2.x/composer.phar`
+6. `php composer.phar install`
+7. `sudo chmod -R 775 bootstrap/`
+8. `sudo chmod -R 775 storage/`
+9. `php artisan migrate`
 10. `php artisan nutgram:register-commands`
 11. `php artisan nutgram:hook:set https://<domain>.<tls>/hook`
 
