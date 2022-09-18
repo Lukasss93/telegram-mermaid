@@ -1,11 +1,11 @@
 version: '3.8'
 
 services:
-    mysql:
-        container_name: telegram-mermaid-mysql
+    db:
+        container_name: telegram-mermaid-db
         image: mysql
         volumes:
-            - mysql-volume:/var/lib/mysql
+            - db-volume:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: mermaid
@@ -33,8 +33,8 @@ services:
             - "host.docker.internal:host-gateway"
 
 volumes:
-    mysql-volume:
-        name: telegram-mermaid-mysql-volume
+    db-volume:
+        name: telegram-mermaid-db-volume
 
 networks:
     telegram-mermaid-network:
