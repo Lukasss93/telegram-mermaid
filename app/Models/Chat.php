@@ -42,7 +42,10 @@ class Chat extends Model
     protected $keyType = 'string';
     public $incrementing = false;
     protected static $unguarded = true;
-    protected $dates = ['started_at', 'blocked_at'];
+    protected $casts = [
+        'started_at' => 'datetime',
+        'blocked_at' => 'datetime',
+    ];
 
     public static function findFromUser(?User $user): ?Chat
     {
