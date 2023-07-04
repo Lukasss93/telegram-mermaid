@@ -13,7 +13,6 @@ use App\Telegram\Handlers\MessageTextHandler;
 use App\Telegram\Handlers\UpdateChatStatusHandler;
 use App\Telegram\Middleware\CheckMaintenance;
 use App\Telegram\Middleware\CollectChat;
-use SergiX44\Nutgram\Telegram\Attributes\MessageTypes;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,9 +43,7 @@ $bot->onCommand('cancel', CancelCommand::class)->description('Close a conversati
 |--------------------------------------------------------------------------
 */
 $bot->onMyChatMember(UpdateChatStatusHandler::class);
-
-$bot->onMessageType(MessageTypes::TEXT, MessageTextHandler::class);
-
+$bot->onText('.*', MessageTextHandler::class);
 $bot->onInlineQuery([InlineQueryHandler::class, 'onInlineQuery']);
 $bot->onChosenInlineResult([InlineQueryHandler::class, 'onChosenInlineResult']);
 $bot->onCommand('start INVALID_TEXT', [InlineQueryHandler::class, 'onInvalidInlineText']);

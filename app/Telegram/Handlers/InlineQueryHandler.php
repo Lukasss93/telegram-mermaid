@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use SergiX44\Nutgram\Nutgram;
+use SergiX44\Nutgram\Telegram\Types\Inline\InlineQueryResultPhoto;
+use SergiX44\Nutgram\Telegram\Types\Inline\InlineQueryResultsButton;
 
 class InlineQueryHandler
 {
@@ -43,39 +45,47 @@ class InlineQueryHandler
 
             //build cached image url
             $url = sprintf("%scached/%s", config('mermaid.baseurl'), $hash);
-            echo $url."\n\n";
+
+            //build result photo
+            $resultPhoto = InlineQueryResultPhoto::make(
+                id: md5($text),
+                photo_url: $url,
+                thumbnail_url: $url,
+                photo_width: $width,
+                photo_height: $height,
+            );
 
             //send message by file_id
-            $bot->answerInlineQuery([
-                [
-                    'type' => 'photo',
-                    'id' => md5($text),
-                    'photo_url' => $url,
-                    'thumb_url' => $url,
-                    'photo_width' => $width,
-                    'photo_height' => $height,
-                ],
-            ], [
-                'switch_pm_text' => sprintf("Max %s chars. Use the PM to ignore limit.", config('mermaid.inline.max_chars')),
-                'switch_pm_parameter' => 'MAX_TEXT',
-                'cache_time' => config('mermaid.inline.cache_time'),
-            ]);
+            $bot->answerInlineQuery(
+                results: [$resultPhoto],
+                cache_time: config('mermaid.inline.cache_time'),
+                button: InlineQueryResultsButton::make(
+                    text: sprintf("Max %s chars. Use the PM to ignore limit.", config('mermaid.inline.max_chars')),
+                    start_parameter: 'MAX_TEXT',
+                ),
+            );
 
         } catch (RequestException $e) {
             $message = $e->response->body();
             Cache::set("$chat_id-inline_error", $message);
 
-            $bot->answerInlineQuery([], [
-                'switch_pm_text' => 'Invalid text. Click here for more info.',
-                'switch_pm_parameter' => 'INVALID_TEXT',
-                'cache_time' => config('mermaid.inline.cache_time'),
-            ]);
+            $bot->answerInlineQuery(
+                results: [],
+                cache_time: config('mermaid.inline.cache_time'),
+                button: InlineQueryResultsButton::make(
+                    text: 'Invalid text. Click here for more info.',
+                    start_parameter: 'INVALID_TEXT',
+                ),
+            );
         } catch (EmptyTextException|TooLongTextException) {
-            $bot->answerInlineQuery([], [
-                'switch_pm_text' => sprintf("Max %s chars. Use the PM to ignore limit.", config('mermaid.inline.max_chars')),
-                'switch_pm_parameter' => 'MAX_TEXT',
-                'cache_time' => config('mermaid.inline.cache_time'),
-            ]);
+            $bot->answerInlineQuery(
+                results: [],
+                cache_time: config('mermaid.inline.cache_time'),
+                button: InlineQueryResultsButton::make(
+                    text: sprintf("Max %s chars. Use the PM to ignore limit.", config('mermaid.inline.max_chars')),
+                    start_parameter: 'MAX_TEXT',
+                )
+            );
         }
     }
 

@@ -3,7 +3,7 @@
 use App\Models\Statistic;
 use Illuminate\Support\Str;
 use SergiX44\Nutgram\Nutgram;
-use SergiX44\Nutgram\Telegram\Attributes\ParseMode;
+use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 
 /**
  * Return a formatted string (in C# like)
@@ -54,10 +54,11 @@ function dt($message): void
     }
 
     $bot = app(Nutgram::class);
-    $bot->sendMessage("<b>Debug:</b>\n<pre>$message</pre>", [
-        'chat_id' => config('owner.id'),
-        'parse_mode' => ParseMode::HTML,
-    ]);
+    $bot->sendMessage(
+        text: "<b>Debug:</b>\n<pre>$message</pre>",
+        chat_id: config('owner.id'),
+        parse_mode: ParseMode::HTML,
+    );
 }
 
 /**
@@ -104,12 +105,13 @@ function stats(string $action, string $category = null, array $value = null, int
 function sendExceptionViaTelegram(Throwable $e): void
 {
     $bot = app(Nutgram::class);
-    $bot->sendMessage(message('exception', [
-        'name' => last(explode('\\', $e::class)),
-        'message' => $e->getMessage(),
-        'line' => $e->getLine(),
-        'file' => str_replace(base_path(), '', $e->getFile()),
-    ]), [
-        'chat_id' => config('owner.id'),
-    ]);
+    $bot->sendMessage(
+        text: message('exception', [
+            'name' => last(explode('\\', $e::class)),
+            'message' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => str_replace(base_path(), '', $e->getFile()),
+        ]),
+        chat_id: config('owner.id'),
+    );
 }

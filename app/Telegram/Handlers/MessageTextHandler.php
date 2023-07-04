@@ -7,7 +7,8 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use SergiX44\Nutgram\Nutgram;
-use SergiX44\Nutgram\Telegram\Attributes\ChatActions;
+use SergiX44\Nutgram\Telegram\Properties\ChatAction;
+use SergiX44\Nutgram\Telegram\Properties\ChatType;
 use SergiX44\Nutgram\Telegram\Types\Internal\InputFile;
 use Throwable;
 
@@ -15,7 +16,7 @@ class MessageTextHandler
 {
     public function __invoke(Nutgram $bot): void
     {
-        $inputMessage=$bot->message();
+        $inputMessage = $bot->message();
         $text = $inputMessage?->text;
         $chatType = $inputMessage?->chat->type;
 
@@ -25,13 +26,13 @@ class MessageTextHandler
         }
 
         //requires a start tag for non-private chats
-        if ($chatType !== 'private') {
+        if ($chatType !== ChatType::PRIVATE) {
             $tag = config('mermaid.tag');
-            if(preg_match("/^$tag\\s(?<text>[\\s\\S]+)\$/", $text, $matches)===false) {
+            if (preg_match("/^$tag\\s(?<text>[\\s\\S]+)\$/", $text, $matches) === false) {
                 return;
             }
 
-            if(!isset($matches['text'])) {
+            if (!isset($matches['text'])) {
                 return;
             }
 
@@ -40,10 +41,11 @@ class MessageTextHandler
 
         $loadingMessage = null;
         try {
-            $loadingMessage = $bot->sendMessage('Loading...', [
-                'disable_notification' => true,
-            ]);
-            $bot->sendChatAction(ChatActions::UPLOAD_PHOTO);
+            $loadingMessage = $bot->sendMessage(
+                text: 'Loading...',
+                disable_notification: true,
+            );
+            $bot->sendChatAction(ChatAction::UPLOAD_PHOTO);
 
             //get image
             $img = Http::baseUrl(config('mermaid.baseurl'))
@@ -55,29 +57,33 @@ class MessageTextHandler
                 ->detach();
 
             //send image
-            $bot->sendPhoto(InputFile::make($img, Str::uuid().'.jpg'), [
-                'allow_sending_without_reply' => true,
-                'reply_to_message_id' => $inputMessage?->message_id,
-            ]);
+            $bot->sendPhoto(
+                photo: InputFile::make($img, Str::uuid().'.jpg'),
+                reply_to_message_id: $inputMessage?->message_id,
+                allow_sending_without_reply: true,
+            );
 
             stats('sent.pm', 'diagram');
         } catch (RequestException $e) {
-            $bot->sendMessage($e->response->body(),[
-                'allow_sending_without_reply' => true,
-                'reply_to_message_id' => $inputMessage?->message_id,
-            ]);
+            $bot->sendMessage(
+                text: $e->response->body(),
+                reply_to_message_id: $inputMessage?->message_id,
+                allow_sending_without_reply: true,
+            );
         } catch (ConnectionException) {
-            $bot->sendMessage('Unable to generate diagram. Retry later.',[
-                'allow_sending_without_reply' => true,
-                'reply_to_message_id' => $inputMessage?->message_id,
-            ]);
+            $bot->sendMessage(
+                text: 'Unable to generate diagram. Retry later.',
+                reply_to_message_id: $inputMessage?->message_id,
+                allow_sending_without_reply: true,
+            );
         } catch (Throwable $e) {
             report($e);
 
-            $bot->sendMessage('Unknown error. Retry later.',[
-                'allow_sending_without_reply' => true,
-                'reply_to_message_id' => $inputMessage?->message_id,
-            ]);
+            $bot->sendMessage(
+                text: 'Unknown error. Retry later.',
+                reply_to_message_id: $inputMessage?->message_id,
+                allow_sending_without_reply: true,
+            );
 
             sendExceptionViaTelegram($e);
         } finally {

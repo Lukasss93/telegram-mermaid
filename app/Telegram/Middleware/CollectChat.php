@@ -16,7 +16,7 @@ class CollectChat
             return;
         }
 
-        $chatType = $bot->chat()?->type ?? 'private';
+        $chatType = $bot->chat()?->type->value ?? 'private';
 
         //collect groups/channels
         if($chatType !== 'private') {
@@ -51,7 +51,7 @@ class CollectChat
             return $chat;
         });
 
-        $bot->setData(Chat::class, $chat);
+        $bot->set(Chat::class, $chat);
 
         $next($bot);
     }

@@ -9,7 +9,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
         "laravel/tinker": "^2.7",
-        "nutgram/nutgram": "^3.0",
+        "nutgram/laravel": "^1.0",
         "predis/predis": "^2.0"
     },
     "require-dev": {
