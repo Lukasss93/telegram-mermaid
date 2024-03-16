@@ -12,7 +12,7 @@
 
 ## 🛠 Built with
 
-- Programming language: PHP 8.1
+- Programming language: PHP 8.3
 - Language framework: [Laravel](https://github.com/laravel/laravel)
 - Bot framework: [Nutgram](https://github.com/SergiX44/Nutgram)
 
