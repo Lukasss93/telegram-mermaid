@@ -3,7 +3,7 @@ version: '3.8'
 services:
     db:
         container_name: telegram-mermaid-db
-        image: mysql
+        image: mariadb
         volumes:
             - db-volume:/var/lib/mysql
         environment:
@@ -16,8 +16,8 @@ services:
         networks:
             - telegram-mermaid-network
 
-    dev:
-        container_name: telegram-mermaid-dev
+    app:
+        container_name: telegram-mermaid-app
         image: chialab/php-dev:8.3-apache
         ports:
             - "80:80"
