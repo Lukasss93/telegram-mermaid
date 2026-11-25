@@ -47,7 +47,7 @@ class InlineQueryHandler
             $url = sprintf("%scached/%s", config('mermaid.baseurl'), $hash);
 
             //build result photo
-            $resultPhoto = InlineQueryResultPhoto::make(
+            $resultPhoto = new InlineQueryResultPhoto(
                 id: md5($text),
                 photo_url: $url,
                 thumbnail_url: $url,
@@ -59,7 +59,7 @@ class InlineQueryHandler
             $bot->answerInlineQuery(
                 results: [$resultPhoto],
                 cache_time: config('mermaid.inline.cache_time'),
-                button: InlineQueryResultsButton::make(
+                button: new InlineQueryResultsButton(
                     text: sprintf("Max %s chars. Use the PM to ignore limit.", config('mermaid.inline.max_chars')),
                     start_parameter: 'MAX_TEXT',
                 ),
@@ -72,7 +72,7 @@ class InlineQueryHandler
             $bot->answerInlineQuery(
                 results: [],
                 cache_time: config('mermaid.inline.cache_time'),
-                button: InlineQueryResultsButton::make(
+                button: new InlineQueryResultsButton(
                     text: 'Invalid text. Click here for more info.',
                     start_parameter: 'INVALID_TEXT',
                 ),
@@ -81,7 +81,7 @@ class InlineQueryHandler
             $bot->answerInlineQuery(
                 results: [],
                 cache_time: config('mermaid.inline.cache_time'),
-                button: InlineQueryResultsButton::make(
+                button: new InlineQueryResultsButton(
                     text: sprintf("Max %s chars. Use the PM to ignore limit.", config('mermaid.inline.max_chars')),
                     start_parameter: 'MAX_TEXT',
                 )

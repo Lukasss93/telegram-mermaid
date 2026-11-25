@@ -92,7 +92,7 @@ function cast(string $type, mixed $value, mixed $default = null): array|bool|flo
  * @param array|null $value
  * @param int|null $chat_id
  */
-function stats(string $action, string $category = null, array $value = null, int $chat_id = null): void
+function stats(string $action, ?string $category = null, ?array $value = null, ?int $chat_id = null): void
 {
     Statistic::create([
         'action' => $action,

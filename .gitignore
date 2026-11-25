@@ -14,3 +14,9 @@ yarn-error.log
 /.vscode
 composer.phar
 .assets/flow/*.bak*
+
+# AI
+.agents
+.codex
+.junie
+AGENTS.md

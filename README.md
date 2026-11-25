@@ -12,16 +12,16 @@
 
 ## 🛠 Built with
 
-- Programming language: PHP 8.3
-- Language framework: [Laravel](https://github.com/laravel/laravel)
+- Programming language: PHP 8.6
+- Language framework: [Laravel 13](https://github.com/laravel/laravel)
 - Bot framework: [Nutgram](https://github.com/SergiX44/Nutgram)
 
 ## 🛡 Requirements
 
 - Apache / nginx
 - SSL support
-- PHP ≥ 8.1
-- MariaDB ≥ 10.2.3 or Postgresql ≥ 9.5 or SQLite with JSON1 extension
+- PHP ≥ 8.6
+- MariaDB ≥ 10.3, PostgreSQL ≥ 10, or SQLite ≥ 3.26 with the JSON1 extension
 - Crontab (to update cached statistics)
 - GIT
 

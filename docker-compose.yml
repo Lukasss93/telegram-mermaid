@@ -8,9 +8,9 @@ services:
             - db-volume:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: mermaid
-            MYSQL_USER: mermaid
-            MYSQL_PASSWORD: mermaid
+            MYSQL_DATABASE: db
+            MYSQL_USER: db
+            MYSQL_PASSWORD: db
         ports:
             - "3306:3306"
         networks:
@@ -18,7 +18,7 @@ services:
 
     app:
         container_name: telegram-mermaid-app
-        image: chialab/php-dev:8.3-apache
+        build: ./.docker
         ports:
             - "80:80"
         depends_on:

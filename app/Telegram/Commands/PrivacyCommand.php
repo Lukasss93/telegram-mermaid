@@ -16,8 +16,8 @@ class PrivacyCommand
             text: message('privacy'),
             parse_mode: ParseMode::HTML,
             disable_web_page_preview: true,
-            reply_markup: InlineKeyboardMarkup::make()
-                ->addRow(InlineKeyboardButton::make('Privacy Policy', config('bot.privacy'))),
+            reply_markup: new InlineKeyboardMarkup()
+                ->addRow(new InlineKeyboardButton('Privacy Policy', config('bot.privacy'))),
         );
 
         stats('privacy', 'command');

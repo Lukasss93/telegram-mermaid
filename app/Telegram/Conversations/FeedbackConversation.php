@@ -25,8 +25,8 @@ class FeedbackConversation extends Conversation
     {
         $message = $bot->sendMessage(
             text: message('feedback.ask'),
-            reply_markup: InlineKeyboardMarkup::make()
-                ->addRow(InlineKeyboardButton::make(text: 'Cancel', callback_data: 'feedback.cancel')),
+            reply_markup: new InlineKeyboardMarkup()
+                ->addRow(new InlineKeyboardButton(text: 'Cancel', callback_data: 'feedback.cancel')),
         );
 
         $this->chat_id = $message->chat->id;
