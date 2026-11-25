@@ -16,6 +16,7 @@ composer.phar
 .assets/flow/*.bak*
 
 # AI
+.ai/mcp
 .agents
 .codex
 .junie

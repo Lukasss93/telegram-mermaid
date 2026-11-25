@@ -14,14 +14,14 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASS }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
-            set -e
             cd ${{ secrets.PROJECT_PATH}}
             php8.6 artisan down
             git fetch --all -p
             git reset --hard
             git pull "https://Lukasss93:${{ secrets.GIT_TOKEN }}@github.com/Lukasss93/telegram-mermaid.git" master
+            wget -q https://getcomposer.org/composer-stable.phar -O composer.phar
             php8.6 composer.phar install --no-dev --optimize-autoloader --no-ansi --no-interaction --no-progress
             php8.6 artisan migrate --force --step
             php8.6 artisan optimize
